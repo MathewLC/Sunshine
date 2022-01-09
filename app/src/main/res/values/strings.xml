@@ -1,8 +1,9 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Sunshine</string>
 
-    <string name="action_refreshed" >Refresh</string>
+    <string name="action_refresh" >Refresh</string>
 
+    <string name="error_message">An error has occurred</string>
     <!-- - - - - - - - - - - - - -->
     <!--Used by SunshineDateUtils-->
     <!-- - - - - - - - - - - - - -->

@@ -31,7 +31,7 @@ object OpenWeatherJsonUtils {
     fun getSimpleWeatherStringsFromJson(
         context: Context?,
         forecastJsonStr: String?
-    ): Array<String?>? {
+    ): List<String>? {
 
         /* Weather information. Each day's forecast info is an element of the "list" array */
         val OWM_LIST = "list"
@@ -47,7 +47,7 @@ object OpenWeatherJsonUtils {
         val OWM_MESSAGE_CODE = "cod"
 
         /* String array to hold each day's weather String */
-        var parsedWeatherData: Array<String?>? = null
+        var parsedWeatherData: MutableList<String>? = null
         val forecastJson = JSONObject(forecastJsonStr)
 
         /* Is there an error? */if (forecastJson.has(OWM_MESSAGE_CODE)) {
@@ -60,7 +60,7 @@ object OpenWeatherJsonUtils {
             }
         }
         val weatherArray = forecastJson.getJSONArray(OWM_LIST)
-        parsedWeatherData = arrayOfNulls(weatherArray.length())
+        parsedWeatherData = mutableListOf<String>()
         val localDate = System.currentTimeMillis()
         val utcDate: Long = SunshineDateUtils.getUTCDateFromLocal(localDate)
         val startDay: Long = SunshineDateUtils.normalizeDate(utcDate)
@@ -102,7 +102,7 @@ object OpenWeatherJsonUtils {
             high = temperatureObject.getDouble(OWM_MAX)
             low = temperatureObject.getDouble(OWM_MIN)
             highAndLow = context?.let { SunshineWeatherUtils.formatHighLows(it, high, low) }.toString()
-            parsedWeatherData[i] = "$date - $description - $highAndLow"
+            parsedWeatherData.add("$date - $description - $highAndLow")
         }
         return parsedWeatherData
     }
