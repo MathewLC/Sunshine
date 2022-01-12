@@ -9,6 +9,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sunshine.data.SunshinePreferences
@@ -19,14 +20,15 @@ import com.example.sunshine.R.id.action_refresh
 import com.example.sunshine.utilities.OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson
 import java.lang.Exception
 
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ForecastAdapter.ForecastAdapterOnClickHandler {
     private lateinit var _mRecyclerView: RecyclerView
     private lateinit var _mForecastAdapter: ForecastAdapter
 
     private lateinit var _errorMessageTextView: TextView
 
     private lateinit var _progressBar: ProgressBar
+
+    private var mToast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         _mRecyclerView.layoutManager = layoutManager
         _mRecyclerView.setHasFixedSize(true)
 
-        _mForecastAdapter = ForecastAdapter()
+        _mForecastAdapter = ForecastAdapter(this)
         _mRecyclerView.adapter = _mForecastAdapter
 
         _progressBar = findViewById(R.id.loading_progress_bar)
@@ -115,6 +117,13 @@ class MainActivity : AppCompatActivity() {
         showWeatherData()
         val userPreferredLocation = SunshinePreferences. getPreferredWeatherLocation(this)
         WeatherQueryTask().execute(userPreferredLocation)
+    }
+
+    override fun onClick(itemClicked: String) {
+        mToast?.cancel()
+        val toastMessage = " \"$itemClicked\" was clicked."
+        mToast = Toast.makeText(this,toastMessage, Toast.LENGTH_SHORT)
+        mToast?.show()
     }
 
     private fun showWeatherData(){

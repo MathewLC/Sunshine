@@ -8,12 +8,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sunshine.ForecastAdapter.ForecastAdapterViewHolder
 
 class ForecastAdapter(
-
+    private val mClickHandler: ForecastAdapterOnClickHandler
 ) : RecyclerView.Adapter<ForecastAdapterViewHolder>() {
     private var mWeatherData: List<String>? = null
 
-    inner class ForecastAdapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    interface ForecastAdapterOnClickHandler {
+        fun onClick(itemClicked: String)
+    }
+
+    inner class ForecastAdapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
         val mWeatherTextView: TextView = itemView.findViewById(R.id.tv_weather_data)
+        override fun onClick(v: View?) {
+            mClickHandler.onClick(mWeatherTextView.text.toString())
+        }
+
 
     }
 
