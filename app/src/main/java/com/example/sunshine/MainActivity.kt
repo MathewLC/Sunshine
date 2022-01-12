@@ -9,6 +9,8 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sunshine.data.SunshinePreferences
 import com.example.sunshine.utilities.NetworkUtils
 import java.net.URL
@@ -19,8 +21,8 @@ import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var _weatherDisplayTextView: TextView
+    private lateinit var _mRecyclerView: RecyclerView
+    private lateinit var _mForecastAdapter: ForecastAdapter
 
     private lateinit var _errorMessageTextView: TextView
 
@@ -30,9 +32,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forecast)
 
-        _weatherDisplayTextView = findViewById(R.id.tv_weather_data)
+
+        _mRecyclerView = findViewById(R.id.recyclerview_forecast)
 
         _errorMessageTextView = findViewById(R.id.tv_error_message)
+
+
+        val layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+        _mRecyclerView.layoutManager = layoutManager
+        _mRecyclerView.setHasFixedSize(true)
+
+        _mForecastAdapter = ForecastAdapter()
+        _mRecyclerView.adapter = _mForecastAdapter
 
         _progressBar = findViewById(R.id.loading_progress_bar)
 
@@ -79,15 +90,7 @@ class MainActivity : AppCompatActivity() {
                  * TextView. Later, we'll learn about a better way to display lists of data.
                  */
                 if(result.any())
-                    result.forEach { weatherString ->
-                    _weatherDisplayTextView.append(
-                        """
-                            $weatherString
-                            
-                            
-                            """.trimIndent()
-                    )
-                }
+                    _mForecastAdapter.setWeatherData(result)
             }
 
             if(result.isNullOrEmpty())
@@ -101,6 +104,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == action_refresh) {
+            _mForecastAdapter.setWeatherData(null)
             loadWeatherData()
             return true
         }
@@ -115,11 +119,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWeatherData(){
         _errorMessageTextView.visibility = INVISIBLE
-        _weatherDisplayTextView.visibility = VISIBLE
+        _mRecyclerView.visibility = VISIBLE
     }
 
     private fun showErrorMessage(){
-        _weatherDisplayTextView.visibility = INVISIBLE
+        _mRecyclerView.visibility = INVISIBLE
         _errorMessageTextView.visibility = VISIBLE
     }
 
