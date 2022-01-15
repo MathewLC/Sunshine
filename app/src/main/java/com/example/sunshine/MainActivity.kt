@@ -1,5 +1,6 @@
 package com.example.sunshine
 
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.example.sunshine.data.SunshinePreferences
 import com.example.sunshine.utilities.NetworkUtils
 import java.net.URL
 import com.example.sunshine.R.id.action_refresh
+import com.example.sunshine.R.id.start
 
 import com.example.sunshine.utilities.OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson
 import java.lang.Exception
@@ -120,10 +122,9 @@ class MainActivity : AppCompatActivity(), ForecastAdapter.ForecastAdapterOnClick
     }
 
     override fun onClick(itemClicked: String) {
-        mToast?.cancel()
-        val toastMessage = " \"$itemClicked\" was clicked."
-        mToast = Toast.makeText(this,toastMessage, Toast.LENGTH_SHORT)
-        mToast?.show()
+        startActivity(
+            Intent(this,DetailActivity::class.java)
+        )
     }
 
     private fun showWeatherData(){
