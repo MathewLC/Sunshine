@@ -1,6 +1,7 @@
 package com.example.sunshine
 
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,12 +12,14 @@ import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ShareCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sunshine.data.SunshinePreferences
 import com.example.sunshine.utilities.NetworkUtils
 import java.net.URL
 import com.example.sunshine.R.id.action_refresh
+import com.example.sunshine.R.id.action_open_map
 import com.example.sunshine.R.id.start
 
 import com.example.sunshine.utilities.OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson
@@ -107,12 +110,32 @@ class MainActivity : AppCompatActivity(), ForecastAdapter.ForecastAdapterOnClick
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == action_refresh) {
-            _mForecastAdapter.setWeatherData(null)
-            loadWeatherData()
-            return true
+        when (id) {
+            action_refresh -> {
+                _mForecastAdapter.setWeatherData(null)
+                loadWeatherData()
+                return true
+            }
+            action_open_map -> {
+                val address = "Piracicaba, SP - Brasil"
+                val uri = Uri.Builder()
+                    .scheme("geo")
+                    .path("0,0")
+                    .appendQueryParameter("q", address)
+                    .build()
+
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                }
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+
         }
-        return super.onOptionsItemSelected(item)
+
+
+
     }
 
     private fun loadWeatherData() {
@@ -124,6 +147,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapter.ForecastAdapterOnClick
     override fun onClick(itemClicked: String) {
         startActivity(
             Intent(this,DetailActivity::class.java)
+                .putExtra(WEATHER_STRING,itemClicked)
         )
     }
 
@@ -135,6 +159,9 @@ class MainActivity : AppCompatActivity(), ForecastAdapter.ForecastAdapterOnClick
     private fun showErrorMessage(){
         _mRecyclerView.visibility = INVISIBLE
         _errorMessageTextView.visibility = VISIBLE
+    }
+    companion object {
+        const val WEATHER_STRING = "WEATHER_STRING"
     }
 
 }

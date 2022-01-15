@@ -5,4 +5,8 @@
         android:title="@string/action_refresh"
         app:showAsAction="ifRoom"
         />
+    <item android:id="@+id/action_open_map"
+        android:title="@string/action_open_map"
+        app:showAsAction="ifRoom"
+        />
 </menu>
